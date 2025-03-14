@@ -103,6 +103,14 @@ export function decode(bytes, item) {
       size = new BigUint64Array(bytes.read(8).buffer)
       return new BigInt64Array(bytes.read(size).buffer)
 
+    case "Float32Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      return new Float32Array(bytes.read(size).buffer)
+
+    case "Float64Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      return new Float64Array(bytes.read(size).buffer)
+
     default:
       break;
   }
