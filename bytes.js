@@ -5,7 +5,7 @@ export function encode(...items) {
   let bytes = [];
 
   items.forEach((item, i) => {
-    switch (items[i].constructor.name) {
+    switch (item.constructor.name) {
       case "Uint8Array":
       case "Uint16Array":
       case "Uint32Array":
@@ -56,7 +56,7 @@ export function encode(...items) {
           for (let key in item) {
             attrs.push.apply(attrs, encode(item[key]))
           }
-        
+
           bytes.push.apply(bytes, size(attrs));
           bytes.push.apply(bytes, attrs);
         }
@@ -65,6 +65,25 @@ export function encode(...items) {
   });
 
   return new Uint8Array(bytes)
+}
+
+export function decode(bytes, item) {
+  let offset = 0
+  let size   = 0
+
+  switch (item.constructor.name) {
+    case "Uint8Array":
+      size = new BigUint64Array(bytes.slice(offset, offset + 8).buffer)
+      offset += 8
+
+      item = new Uint8Array(bytes.slice(offset, offset + size))
+      offset += size
+
+      return item
+
+    default:
+      break;
+  }
 }
 
 export function size(bytes) {

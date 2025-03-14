@@ -1,7 +1,6 @@
-import { encode } from './bytes.js';
-import { log } from "console";
+import { encode, decode } from './bytes.js';
 import assert from 'assert';
-import { Test } from 'mocha';
+import { log } from "console";
 
 class TestUser {
   constructor() {
@@ -11,14 +10,22 @@ class TestUser {
   }
 }
 
-describe('#encode', () => {
-  // Uints
+describe('encode/decode', () => {
   let array = new Uint8Array([1, 2, 3]);
   let want  = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3]);
-  it('encodes Uint8Array', () => { assert.deepEqual(encode(array), want) });
+  let bytes = encode(array);
 
-  array = new Uint16Array([1, 2, 3]);
-  want  = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0]);
+  it('encodes Uint8Array', () => { assert.deepEqual(bytes, want) });
+
+  let got = new Uint8Array();
+  got = decode(bytes, got)
+
+  it('decodes Uint8Array', () => { assert.deepEqual(array, got) });
+})
+
+describe('#encode', () => {
+  let array = new Uint16Array([1, 2, 3]);
+  let want  = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0]);
   it('encodes Uint16Array', () => { assert.deepEqual(encode(array), want) });
 
   array = new Uint32Array([1]);
