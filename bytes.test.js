@@ -1,6 +1,7 @@
 import { encode, decode } from './bytes.js';
-import assert from 'assert';
+import { Buffer } from './buffer.js';
 import { log } from "console";
+import assert from 'assert';
 
 class TestUser {
   constructor() {
@@ -17,23 +18,45 @@ describe('encode/decode', () => {
 
   it('encodes Uint8Array', () => { assert.deepEqual(bytes, want) });
 
-  let got = new Uint8Array();
-  got = decode(bytes, got)
+  let buffer = new Buffer(bytes)
+  let got    = new Uint8Array();
 
+  got = decode(buffer, got)
   it('decodes Uint8Array', () => { assert.deepEqual(array, got) });
 })
 
-describe('#encode', () => {
+describe('encode/decode', () => {
   let array = new Uint16Array([1, 2, 3]);
   let want  = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0]);
-  it('encodes Uint16Array', () => { assert.deepEqual(encode(array), want) });
+  let bytes = encode(array);
+  
+  it('encodes Uint16Array', () => { assert.deepEqual(bytes, want) });
 
-  array = new Uint32Array([1]);
-  want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]);
-  it('encodes Uint32Array', () => { assert.deepEqual(encode(array), want) });
+  let buffer = new Buffer(bytes)
+  let got    = new Uint16Array();
 
-  array = new BigUint64Array([BigInt(2)]);
-  want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0]);
+  got = decode(buffer, got)
+  it('decodes Uint16Array', () => { assert.deepEqual(array, got) });
+});
+
+
+describe('encode/decode', () => {
+  let array = new Uint32Array([1]);
+  let want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]);
+  let bytes = encode(array);
+  
+  it('encodes Uint32Array', () => { assert.deepEqual(bytes, want) });
+
+  let buffer = new Buffer(bytes)
+  let got    = new Uint32Array();
+
+  got = decode(buffer, got)
+  it('decodes Uint32Array', () => { assert.deepEqual(array, got) });
+});
+
+describe('#encode', () => {
+  let array = new BigUint64Array([BigInt(2)]);
+  let want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0]);
   it('encodes BigUint64Array', () => { assert.deepEqual(encode(array), want) });
 
   // Ints

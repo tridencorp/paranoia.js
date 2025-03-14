@@ -68,17 +68,22 @@ export function encode(...items) {
 }
 
 export function decode(bytes, item) {
-  let offset = 0
-  let size   = 0
+  let size = 0
 
   switch (item.constructor.name) {
     case "Uint8Array":
-      size = new BigUint64Array(bytes.slice(offset, offset + 8).buffer)
-      offset += 8
+      size = new BigUint64Array(bytes.read(8).buffer)
+      item = bytes.read(size)
+      return item
 
-      item = new Uint8Array(bytes.slice(offset, offset + size))
-      offset += size
+    case "Uint16Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      item = new Uint16Array(bytes.read(size).buffer)
+      return item
 
+    case "Uint32Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      item = new Uint32Array(bytes.read(size).buffer)
       return item
 
     default:
