@@ -86,7 +86,23 @@ export function decode(bytes, item) {
     case "BigUint64Array":
       size = new BigUint64Array(bytes.read(8).buffer)
       return new BigUint64Array(bytes.read(size).buffer)
-    
+
+    case "Int8Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      return new Int8Array(bytes.read(size))
+
+    case "Int16Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      return new Int16Array(bytes.read(size).buffer)
+
+    case "Int32Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      return new Int32Array(bytes.read(size).buffer)
+
+    case "BigInt64Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      return new BigInt64Array(bytes.read(size).buffer)
+
     default:
       break;
   }
