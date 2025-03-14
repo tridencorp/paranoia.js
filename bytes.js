@@ -3,7 +3,6 @@ import { log } from "console";
 // Encode data to bytes.
 export function encode(...items) {
   let bytes = [];
-  let size  = 0
 
   items.forEach((item, i) => {
     switch (items[i].constructor.name) {
@@ -19,9 +18,7 @@ export function encode(...items) {
 
       case "Float32Array":
       case "Float64Array":
-        size = new BigUint64Array([BigInt(item.length)]);
-
-        bytes.push.apply(bytes, new Uint8Array(size.buffer));
+        bytes.push.apply(bytes, size(item));
         bytes.push.apply(bytes, new Uint8Array(item.buffer));
         break;
 
@@ -33,9 +30,7 @@ export function encode(...items) {
           res.push.apply(res, encode(elem))
         });
 
-        size = new BigUint64Array([BigInt(res.length)]);
-
-        bytes.push.apply(bytes, new Uint8Array(size.buffer));
+        bytes.push.apply(bytes, size(res));
         bytes.push.apply(bytes, res);
         break;
 
@@ -43,9 +38,7 @@ export function encode(...items) {
         const encoder = new TextEncoder();
         const string  = encoder.encode(item);
 
-        size = new BigUint64Array([BigInt(string.length)]);
-
-        bytes.push.apply(bytes, new Uint8Array(size.buffer));
+        bytes.push.apply(bytes, size(string));
         bytes.push.apply(bytes, new Uint8Array(string.buffer));
         break;
 
@@ -56,4 +49,9 @@ export function encode(...items) {
   });
 
   return new Uint8Array(bytes)
+}
+
+export function size(bytes) {
+  let size = new BigUint64Array([BigInt(bytes.length)]);
+  return new Uint8Array(size.buffer)
 }
