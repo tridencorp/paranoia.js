@@ -54,14 +54,23 @@ describe('encode/decode', () => {
   it('decodes Uint32Array', () => { assert.deepEqual(array, got) });
 });
 
-describe('#encode', () => {
+describe('encode/decode', () => {
   let array = new BigUint64Array([BigInt(2)]);
   let want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0]);
-  it('encodes BigUint64Array', () => { assert.deepEqual(encode(array), want) });
+  let bytes = encode(array);
+  
+  it('encodes BigUint64Array', () => { assert.deepEqual(bytes, want) });
 
-  // Ints
-  array = new Int8Array([1, 2, 3]);
-  want  = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3]);
+  let buffer = new Buffer(bytes)
+  let got    = new BigUint64Array();
+
+  got = decode(buffer, got)
+  it('decodes BigUint64Array', () => { assert.deepEqual(array, got) });
+});
+
+describe('#encode', () => {
+  let array = new Int8Array([1, 2, 3]);
+  let want  = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3]);
   it('encodes Int8Array', () => { assert.deepEqual(encode(array), want) });
 
   array = new Int16Array([1, 2, 3]);

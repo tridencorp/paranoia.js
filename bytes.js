@@ -73,19 +73,20 @@ export function decode(bytes, item) {
   switch (item.constructor.name) {
     case "Uint8Array":
       size = new BigUint64Array(bytes.read(8).buffer)
-      item = bytes.read(size)
-      return item
+      return bytes.read(size)
 
     case "Uint16Array":
       size = new BigUint64Array(bytes.read(8).buffer)
-      item = new Uint16Array(bytes.read(size).buffer)
-      return item
+      return new Uint16Array(bytes.read(size).buffer)
 
     case "Uint32Array":
       size = new BigUint64Array(bytes.read(8).buffer)
-      item = new Uint32Array(bytes.read(size).buffer)
-      return item
+      return new Uint32Array(bytes.read(size).buffer)
 
+    case "BigUint64Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      return new BigUint64Array(bytes.read(size).buffer)
+    
     default:
       break;
   }
