@@ -14,7 +14,7 @@ export function encode(...items) {
       case "Int8Array":
       case "Int16Array":
       case "Int32Array":
-      case "BigIint64Array":
+      case "BigInt64Array":
 
       case "Float32Array":
       case "Float64Array":
