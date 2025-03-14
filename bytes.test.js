@@ -1,6 +1,15 @@
 import { encode } from './bytes.js';
 import { log } from "console";
 import assert from 'assert';
+import { Test } from 'mocha';
+
+class TestUser {
+  constructor() {
+    this.name  = "name";
+    this.age   = 21;
+    this.price = new Uint8Array();
+  }
+}
 
 describe('#encode', () => {
   // Uints
@@ -63,4 +72,18 @@ describe('#encode', () => {
   let num  = 666;
   let want = new Uint8Array([154, 2, 0, 0, 0, 0, 0, 0]);
   it('encodes numbers', () => { assert.deepEqual(encode(num), want) });
+});
+
+describe('#encode', () => {
+  let object = new TestUser();
+  
+  let want = new Uint8Array([
+    28, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Total length
+    4, 0, 0, 0, 0, 0, 0, 0,   // 8 bytes: String length
+    110, 97, 109, 101,        // 4 bytes: String value
+    21, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Number value
+    0, 0, 0, 0, 0, 0, 0, 0    // 8 bytes: Length of Uint8Array
+  ]);
+
+  it('encodes classes', () => { assert.deepEqual(encode(object), want) });
 });

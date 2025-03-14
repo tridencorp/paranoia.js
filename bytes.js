@@ -24,7 +24,7 @@ export function encode(...items) {
 
       case "Array":
         // Nested arrays
-        let res = []
+        const res = []
 
         item.forEach((elem, i) => {
           res.push.apply(res, encode(elem))
@@ -43,12 +43,22 @@ export function encode(...items) {
         break;
 
       case "Number":
-        let num = new BigInt64Array([BigInt(item)]);
+        const num = new BigInt64Array([BigInt(item)]);
         bytes.push.apply(bytes, new Uint8Array(num.buffer));
         break;
-        
+
       default:
-        log(items[i].constructor.name)
+        // Check if we have object.
+        if (item instanceof Object) {
+          let attrs = []
+          
+          for (let key in item) {
+            attrs.push.apply(attrs, encode(item[key]))
+          }
+        
+          bytes.push.apply(bytes, size(attrs));
+          bytes.push.apply(bytes, attrs);
+        }
         break;
     };
   });
