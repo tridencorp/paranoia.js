@@ -3,6 +3,7 @@ import { log } from "console";
 // Encode data to bytes.
 export function encode(...items) {
   let bytes = [];
+  let size  = 0
 
   items.forEach((item, i) => {
     switch (items[i].constructor.name) {
@@ -18,14 +19,24 @@ export function encode(...items) {
 
       case "Float32Array":
       case "Float64Array":
-        let size = new BigUint64Array([BigInt(item.length)]);
+        size = new BigUint64Array([BigInt(item.length)]);
 
         bytes.push.apply(bytes, new Uint8Array(size.buffer));
         bytes.push.apply(bytes, new Uint8Array(item.buffer));
         break;
 
       case "Array":
-        log(items[i].constructor.name);
+        // Nested arrays
+        let res  = []
+        
+        item.forEach((elem, i) => {
+          res.push.apply(res, encode(elem))
+        });
+
+        size = new BigUint64Array([BigInt(res.length)]);
+        bytes.push.apply(bytes, new Uint8Array(size.buffer));
+        bytes.push.apply(bytes, res);
+
         break;
 
       default:

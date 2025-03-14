@@ -46,3 +46,10 @@ describe('#encode', () => {
   want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63]);
   it('encodes Float64Array', () => { assert.deepEqual(encode(array), want) });
 });
+
+describe('#encode', () => {
+  let array = [new Uint16Array([1]), new Uint16Array([2])];
+  let want  = new Uint8Array([20, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0]);
+
+  it('encodes nested Uint16Array', () => { assert.deepEqual(encode(array), want) });
+});
