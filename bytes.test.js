@@ -58,3 +58,9 @@ describe('#encode', () => {
   let want = new Uint8Array([13, 0, 0, 0, 0, 0, 0, 0, 112, 97, 114, 97, 110, 111, 105, 97, 32, 116, 101, 115, 116]);
   it('encodes string', () => { assert.deepEqual(encode(str), want) });
 });
+
+describe('#encode', () => {
+  let num  = 666;
+  let want = new Uint8Array([154, 2, 0, 0, 0, 0, 0, 0]);
+  it('encodes numbers', () => { assert.deepEqual(encode(num), want) });
+});

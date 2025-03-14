@@ -25,7 +25,7 @@ export function encode(...items) {
       case "Array":
         // Nested arrays
         let res = []
-        
+
         item.forEach((elem, i) => {
           res.push.apply(res, encode(elem))
         });
@@ -42,6 +42,11 @@ export function encode(...items) {
         bytes.push.apply(bytes, new Uint8Array(string.buffer));
         break;
 
+      case "Number":
+        let num = new BigInt64Array([BigInt(item)]);
+        bytes.push.apply(bytes, new Uint8Array(num.buffer));
+        break;
+        
       default:
         log(items[i].constructor.name)
         break;
