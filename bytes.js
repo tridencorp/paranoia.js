@@ -24,7 +24,7 @@ export function encode(...items) {
 
       case "Array":
         // Nested arrays
-        const res = []
+        let res = []
 
         item.forEach((elem, i) => {
           res.push.apply(res, encode(elem))
@@ -51,7 +51,8 @@ export function encode(...items) {
         // Check if we have object.
         if (item instanceof Object) {
           let attrs = []
-          
+
+          // Iterate all attributes and encode them. 
           for (let key in item) {
             attrs.push.apply(attrs, encode(item[key]))
           }

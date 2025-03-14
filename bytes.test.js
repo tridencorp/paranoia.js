@@ -76,7 +76,7 @@ describe('#encode', () => {
 
 describe('#encode', () => {
   let object = new TestUser();
-  
+
   let want = new Uint8Array([
     28, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Total length
     4, 0, 0, 0, 0, 0, 0, 0,   // 8 bytes: String length
