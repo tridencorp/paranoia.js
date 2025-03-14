@@ -27,16 +27,26 @@ export function encode(...items) {
 
       case "Array":
         // Nested arrays
-        let res  = []
+        let res = []
         
         item.forEach((elem, i) => {
           res.push.apply(res, encode(elem))
         });
 
         size = new BigUint64Array([BigInt(res.length)]);
+
         bytes.push.apply(bytes, new Uint8Array(size.buffer));
         bytes.push.apply(bytes, res);
+        break;
 
+      case "String":
+        const encoder = new TextEncoder();
+        const string  = encoder.encode(item);
+
+        size = new BigUint64Array([BigInt(string.length)]);
+
+        bytes.push.apply(bytes, new Uint8Array(size.buffer));
+        bytes.push.apply(bytes, new Uint8Array(string.buffer));
         break;
 
       default:
