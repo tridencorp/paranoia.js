@@ -13,34 +13,34 @@ class TestUser {
 
 let tests = [
   // Uints
-  { array: new Uint8Array([1, 2, 3]),       type: Uint8Array,     want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
-  { array: new Uint16Array([1, 2, 3]),      type: Uint16Array,    want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
-  { array: new Uint32Array([1]),            type: Uint32Array,    want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0])},
-  { array: new BigUint64Array([BigInt(2)]), type: BigUint64Array, want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
+  { object: new Uint8Array([1, 2, 3]),       type: Uint8Array,     want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
+  { object: new Uint16Array([1, 2, 3]),      type: Uint16Array,    want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
+  { object: new Uint32Array([1]),            type: Uint32Array,    want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0])},
+  { object: new BigUint64Array([BigInt(2)]), type: BigUint64Array, want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
 
   // Ints
-  { array: new Int8Array([1, 2, 3]),       type: Int8Array,     want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
-  { array: new Int16Array([1, 2, 3]),      type: Int16Array,    want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
-  { array: new Int32Array([1]),            type: Int32Array,    want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]) },
-  { array: new BigInt64Array([BigInt(2)]), type: BigInt64Array, want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
+  { object: new Int8Array([1, 2, 3]),        type: Int8Array,      want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
+  { object: new Int16Array([1, 2, 3]),       type: Int16Array,     want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
+  { object: new Int32Array([1]),             type: Int32Array,     want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]) },
+  { object: new BigInt64Array([BigInt(2)]),  type: BigInt64Array,  want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
 
   // Floats
-  { array: new Float32Array([1.0]), type: Float32Array, want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63])},
-  { array: new Float64Array([1.0]), type: Float64Array, want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63])},
+  { object: new Float32Array([1.0]),         type: Float32Array,   want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63])},
+  { object: new Float64Array([1.0]),         type: Float64Array,   want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63])},
 ]
 
 for (let test of tests) {
   describe('encode/decode', () => {
-    let bytes = encode(test.array);
-    let name  = test.array.constructor.name
+    let name = test.object.constructor.name
+
+    let bytes = encode(test.object);
+    let buffer = new Buffer(bytes)
+
+    let res = new test.type;
+    res = decode(buffer, res)
 
     it(`encodes ${name}`, () => { assert.deepEqual(bytes, test.want) });
-
-    let buffer = new Buffer(bytes)
-    let got    = new test.type;
-
-    got = decode(buffer, got)
-    it(`decodes ${name}`, () => { assert.deepEqual(test.array, got) });
+    it(`decodes ${name}`, () => { assert.deepEqual(test.object, res) });
   })
 }
 
