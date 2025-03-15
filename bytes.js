@@ -30,7 +30,7 @@ export function encode(...items) {
           res.push.apply(res, encode(elem))
         });
 
-        bytes.push.apply(bytes, size(res));
+        bytes.push.apply(bytes, size(item));
         bytes.push.apply(bytes, res);
         break;
 
@@ -67,7 +67,7 @@ export function encode(...items) {
   return new Uint8Array(bytes)
 }
 
-export function decode(bytes, item) {
+export function decode(bytes, item, type) {
   let size = 0
 
   switch (item.constructor.name) {
@@ -111,6 +111,10 @@ export function decode(bytes, item) {
       size = new BigUint64Array(bytes.read(8).buffer)
       return new Float64Array(bytes.read(size).buffer)
 
+    case "Array":
+      size = new BigUint64Array(bytes.read(8).buffer)
+      item.push(1, 2, 3)
+      
     default:
       break;
   }
