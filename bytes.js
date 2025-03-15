@@ -68,48 +68,24 @@ export function encode(...items) {
 }
 
 export function decode(bytes, item, type) {
-  let size = 0
-
+  let size   = 0
+  let _class = global[item.constructor.name]
+  
   switch (item.constructor.name) {
     case "Uint8Array":
-      size = new BigUint64Array(bytes.read(8).buffer)
-      return bytes.read(size)
-
     case "Uint16Array":
-      size = new BigUint64Array(bytes.read(8).buffer)
-      return new Uint16Array(bytes.read(size).buffer)
-
     case "Uint32Array":
-      size = new BigUint64Array(bytes.read(8).buffer)
-      return new Uint32Array(bytes.read(size).buffer)
-
     case "BigUint64Array":
-      size = new BigUint64Array(bytes.read(8).buffer)
-      return new BigUint64Array(bytes.read(size).buffer)
-
+    
     case "Int8Array":
-      size = new BigUint64Array(bytes.read(8).buffer)
-      return new Int8Array(bytes.read(size))
-
     case "Int16Array":
-      size = new BigUint64Array(bytes.read(8).buffer)
-      return new Int16Array(bytes.read(size).buffer)
-
     case "Int32Array":
-      size = new BigUint64Array(bytes.read(8).buffer)
-      return new Int32Array(bytes.read(size).buffer)
-
     case "BigInt64Array":
-      size = new BigUint64Array(bytes.read(8).buffer)
-      return new BigInt64Array(bytes.read(size).buffer)
-
+    
     case "Float32Array":
-      size = new BigUint64Array(bytes.read(8).buffer)
-      return new Float32Array(bytes.read(size).buffer)
-
     case "Float64Array":
       size = new BigUint64Array(bytes.read(8).buffer)
-      return new Float64Array(bytes.read(size).buffer)
+      return new _class(bytes.read(size).buffer)
 
     case "Array":
       size = new BigUint64Array(bytes.read(8).buffer)
