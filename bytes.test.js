@@ -13,151 +13,36 @@ class TestUser {
 
 let tests = [
   // Uints
-  { array: new Uint8Array([1, 2, 3]),       want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
-  { array: new Uint16Array([1, 2, 3]),      want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
-  { array: new Uint32Array([1]),            want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0])},
-  { array: new BigUint64Array([BigInt(2)]), want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
+  { array: new Uint8Array([1, 2, 3]),       type: Uint8Array,     want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
+  { array: new Uint16Array([1, 2, 3]),      type: Uint16Array,    want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
+  { array: new Uint32Array([1]),            type: Uint32Array,    want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0])},
+  { array: new BigUint64Array([BigInt(2)]), type: BigUint64Array, want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
 
   // Ints
-  { array: new Int8Array([1, 2, 3]),       want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
-  { array: new Int16Array([1, 2, 3]),      want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
-  { array: new Int32Array([1]),            want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]) },
-  { array: new BigInt64Array([BigInt(2)]), want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
+  { array: new Int8Array([1, 2, 3]),       type: Int8Array,     want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
+  { array: new Int16Array([1, 2, 3]),      type: Int16Array,    want: new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
+  { array: new Int32Array([1]),            type: Int32Array,    want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]) },
+  { array: new BigInt64Array([BigInt(2)]), type: BigInt64Array, want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
+
+  // Floats
+  { array: new Float32Array([1.0]), type: Float32Array, want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63])},
+  { array: new Float64Array([1.0]), type: Float64Array, want: new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63])},
 ]
 
 for (let test of tests) {
   describe('encode/decode', () => {
     let bytes = encode(test.array);
-    it(`encodes ${test.array.constructor.name}`, () => { assert.deepEqual(bytes, test.want) });
+    let name  = test.array.constructor.name
+
+    it(`encodes ${name}`, () => { assert.deepEqual(bytes, test.want) });
+
+    let buffer = new Buffer(bytes)
+    let got    = new test.type;
+
+    got = decode(buffer, got)
+    it(`decodes ${name}`, () => { assert.deepEqual(test.array, got) });
   })
 }
-
-// describe('encode/decode', () => {
-//   let array = new Uint8Array([1, 2, 3]);
-//   let want  = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3]);
-//   let bytes = encode(array);
-
-//   it('encodes Uint8Array', () => { assert.deepEqual(bytes, want) });
-
-//   let buffer = new Buffer(bytes)
-//   let got    = new Uint8Array();
-
-//   got = decode(buffer, got)
-//   it('decodes Uint8Array', () => { assert.deepEqual(array, got) });
-// })
-
-// describe('encode/decode', () => {
-//   let array = new Uint16Array([1, 2, 3]);
-//   let want  = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0]);
-//   let bytes = encode(array);
-  
-//   it('encodes Uint16Array', () => { assert.deepEqual(bytes, want) });
-
-//   let buffer = new Buffer(bytes)
-//   let got    = new Uint16Array();
-
-//   got = decode(buffer, got)
-//   it('decodes Uint16Array', () => { assert.deepEqual(array, got) });
-// });
-
-// describe('encode/decode', () => {
-//   let array = new Uint32Array([1]);
-//   let want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]);
-//   let bytes = encode(array);
-  
-//   it('encodes Uint32Array', () => { assert.deepEqual(bytes, want) });
-
-//   let buffer = new Buffer(bytes)
-//   let got    = new Uint32Array();
-
-//   got = decode(buffer, got)
-//   it('decodes Uint32Array', () => { assert.deepEqual(array, got) });
-// });
-
-// describe('encode/decode', () => {
-//   let array = new BigUint64Array([BigInt(2)]);
-//   let want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0]);
-//   let bytes = encode(array);
-  
-//   it('encodes BigUint64Array', () => { assert.deepEqual(bytes, want) });
-
-//   let buffer = new Buffer(bytes)
-//   let got    = new BigUint64Array();
-
-//   got = decode(buffer, got)
-//   it('decodes BigUint64Array', () => { assert.deepEqual(array, got) });
-// });
-
-
-// describe('encode/decode', () => {
-//   let array = new Int8Array([1, 2, 3]);
-//   let want  = new Uint8Array([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3]);
-//   let bytes = encode(array);
-
-//   it('encodes Int8Array', () => { assert.deepEqual(bytes, want) });
-
-//   let buffer = new Buffer(bytes)
-//   let got    = new Int8Array();
-
-//   got = decode(buffer, got)
-//   it('decodes Int8Array', () => { assert.deepEqual(array, got) });
-// })
-
-// describe('encode/decode', () => {
-//   let array = new Int32Array([1]);
-//   let want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]);
-//   let bytes = encode(array);
-  
-//   it('encodes Int32Array', () => { assert.deepEqual(bytes, want) });
-
-//   let buffer = new Buffer(bytes)
-//   let got    = new Int32Array();
-
-//   got = decode(buffer, got)
-//   it('decodes Uint32Array', () => { assert.deepEqual(array, got) });
-// })
-
-// describe('encode/decode', () => {
-//   let array = new BigInt64Array([BigInt(2)]);
-//   let want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0]);
-//   let bytes = encode(array);
-
-//   it('encodes BigInt64Array', () => { assert.deepEqual(encode(array), want) });
-
-//   let buffer = new Buffer(bytes)
-//   let got    = new BigInt64Array();
-
-//   got = decode(buffer, got)
-//   it('decodes BigInt64Array', () => { assert.deepEqual(array, got) });
-// })
-
-describe('encode/decode', () => {
-  let array = new Float32Array([1.0]);
-  let want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63]);
-  let bytes = encode(array);
-
-  it('encodes Float32Array', () => { assert.deepEqual(bytes, want) });
-
-  let buffer = new Buffer(bytes)
-  let got    = new Float32Array();
-
-  got = decode(buffer, got)
-  it('decodes Float32Array', () => { assert.deepEqual(array, got) });
-})
-
-describe('encode/decode', () => {
-  let array = new Float64Array([1.0]);
-  let want  = new Uint8Array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63]);
-  let bytes = encode(array);
-
-  it('encodes Float64Array', () => { assert.deepEqual(bytes, want) });
-
-  let buffer = new Buffer(bytes)
-  let got    = new Float64Array();
-
-  got = decode(buffer, got)
-  it('decodes Float64Array', () => { assert.deepEqual(array, got) });
-})
 
 describe('encode/decode', () => {
   let array = [new Uint16Array([1]), new Uint16Array([2])];
