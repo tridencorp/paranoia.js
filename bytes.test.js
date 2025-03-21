@@ -31,13 +31,13 @@ let tests = [
 
 for (let test of tests) {
   describe('encode/decode', () => {
-    let name = test.object.constructor.name
+    let name = test.object.constructor.name;
 
     let bytes = encode(test.object);
-    let buffer = new Buffer(bytes)
+    let buffer = new Buffer(bytes);
 
     let res = new test.type;
-    res = decode(buffer, res)
+    res = decode(buffer, res);
 
     it(`encodes ${name}`, () => { assert.deepEqual(bytes, test.want) });
     it(`decodes ${name}`, () => { assert.deepEqual(test.object, res) });
