@@ -97,7 +97,14 @@ export function decode(buffer, item, type) {
       for (let i = 0; i < size; i++) {
         item.push(decode(buffer, new type))
       }
-    
+      break;
+
+    case "String":
+      const decoder = new TextDecoder();
+
+      size = new BigUint64Array(buffer.read(8).buffer);
+      return decoder.decode(buffer.read(size).buffer);
+
     default:
       break;
   }

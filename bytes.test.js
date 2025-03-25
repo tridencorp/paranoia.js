@@ -59,9 +59,17 @@ describe('encode/decode', () => {
 });
 
 describe('#encode', () => {
-  let str  = "paranoia test";
-  let want = new Uint8Array([13, 0, 0, 0, 0, 0, 0, 0, 112, 97, 114, 97, 110, 111, 105, 97, 32, 116, 101, 115, 116]);
-  it('encodes string', () => { assert.deepEqual(encode(str), want) });
+  let str   = "paranoia test";
+  let want  = new Uint8Array([13, 0, 0, 0, 0, 0, 0, 0, 112, 97, 114, 97, 110, 111, 105, 97, 32, 116, 101, 115, 116]);
+  let bytes = encode(str)
+
+  it('encodes string', () => { assert.deepEqual(bytes, want) });
+  
+  let buffer = new Buffer(bytes);
+  let got    = "";
+
+  got = decode(buffer, got);
+  it('decodes string', () => { assert.deepEqual(str, got) });
 });
 
 describe('#encode', () => {
