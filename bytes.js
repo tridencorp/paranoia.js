@@ -97,18 +97,30 @@ export function decode(buffer, item, type) {
       for (let i = 0; i < size; i++) {
         item.push(decode(buffer, new type))
       }
-      break;
+      return item
 
     case "String":
       const decoder = new TextDecoder();
 
       size = new BigUint64Array(buffer.read(8).buffer);
+      size = Number(size[0])
+
       return decoder.decode(buffer.read(size).buffer);
 
     case "Number":
       return Number(new BigInt64Array(buffer.read(8).buffer)[0]);
 
     default:
+      // Decode Object.
+      if (item instanceof Object) {
+        size = new BigUint64Array(buffer.read(8).buffer);
+        size = Number(size[0])
+
+        // Decode attributes.
+        for (let attr in item) {
+          item[attr] = decode(buffer, item[attr])
+        }
+      }
       break;
   }
 }

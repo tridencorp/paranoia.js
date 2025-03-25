@@ -88,6 +88,7 @@ describe('#encode', () => {
 
 describe('#encode', () => {
   let object = new TestUser();
+  let bytes  = encode(object);
 
   let want = new Uint8Array([
     28, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Total length
@@ -97,5 +98,11 @@ describe('#encode', () => {
     0, 0, 0, 0, 0, 0, 0, 0    // 8 bytes: Length of Uint8Array
   ]);
 
-  it('encodes classes', () => { assert.deepEqual(encode(object), want) });
+  it('encodes classes', () => { assert.deepEqual(bytes, want) });
+
+  let buffer = new Buffer(bytes);
+  let got    = new TestUser();
+
+  decode(buffer, got);
+  it('decodes classes', () => { assert.deepEqual(got, object) });
 });
