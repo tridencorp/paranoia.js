@@ -105,6 +105,9 @@ export function decode(buffer, item, type) {
       size = new BigUint64Array(buffer.read(8).buffer);
       return decoder.decode(buffer.read(size).buffer);
 
+    case "Number":
+      return Number(new BigInt64Array(buffer.read(8).buffer)[0]);
+
     default:
       break;
   }

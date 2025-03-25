@@ -73,9 +73,17 @@ describe('#encode', () => {
 });
 
 describe('#encode', () => {
-  let num  = 666;
-  let want = new Uint8Array([154, 2, 0, 0, 0, 0, 0, 0]);
-  it('encodes numbers', () => { assert.deepEqual(encode(num), want) });
+  let num   = 666;
+  let want  = new Uint8Array([154, 2, 0, 0, 0, 0, 0, 0]);
+  let bytes = encode(num)
+
+  it('encodes numbers', () => { assert.deepEqual(bytes, want) });
+
+  let buffer = new Buffer(bytes);
+  let got    = 0;
+
+  got = decode(buffer, got);
+  it('decodes numbers', () => { assert.deepEqual(got, num) });
 });
 
 describe('#encode', () => {
