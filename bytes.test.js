@@ -55,7 +55,7 @@ describe('encode/decode', () => {
   let got    = [];
 
   decode(buffer, got, Uint16Array);
-  // it('decodes nested Uint16Array', () => { assert.deepEqual(array, got) });
+  it('decodes nested Uint16Array', () => { assert.deepEqual(array, got) });
 });
 
 describe('#encode', () => {

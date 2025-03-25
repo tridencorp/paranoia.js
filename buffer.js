@@ -5,6 +5,7 @@ export class Buffer {
   }
 
   // Read number of bytes and return them as Uint8Array.
+  // TODO: check types.
   read(number) {
     const slice = this.buffer.slice(this.offset, this.offset + number)
     this.offset += number

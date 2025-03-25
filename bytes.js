@@ -52,7 +52,7 @@ export function encode(...objects) {
         if (object instanceof Object) {
           let attrs = []
 
-          // Iterate all attributes and encode them. 
+          // Iterate attributes and encode them. 
           for (let attr in object) {
             attrs.push.apply(attrs, encode(object[attr]))
           }
@@ -67,7 +67,7 @@ export function encode(...objects) {
   return new Uint8Array(bytes)
 }
 
-export function decode(bytes, item, type) {
+export function decode(buffer, item, type) {
   let size = 0;
 
   switch (item.constructor.name) {
@@ -83,15 +83,21 @@ export function decode(bytes, item, type) {
 
     case "Float32Array":
     case "Float64Array":
+      // Get object name, ex: Uint8Array, Int32Array, ...
       let _class = global[item.constructor.name];
 
-      size = new BigUint64Array(bytes.read(8).buffer);
-      return new _class(bytes.read(size).buffer);
+      size = new BigUint64Array(buffer.read(8).buffer);
+      size = Number(size[0]) * _class.BYTES_PER_ELEMENT
 
+      return new _class(buffer.read(size).buffer);
+
+    // Nested array.
     case "Array":
-      size = new BigUint64Array(bytes.read(8).buffer);
-      item.push(1, 2, 3);
-
+      size = new BigUint64Array(buffer.read(8).buffer);
+      for (let i = 0; i < size; i++) {
+        item.push(decode(buffer, new type))
+      }
+    
     default:
       break;
   }
