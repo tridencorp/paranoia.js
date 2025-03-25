@@ -1,4 +1,5 @@
 import { log } from "console";
+import { buffer } from "stream/consumers";
 
 // Encode data to bytes.
 export function encode(...objects) {
@@ -46,7 +47,12 @@ export function encode(...objects) {
         const num = new BigInt64Array([BigInt(object)]);
         bytes.push.apply(bytes, new Uint8Array(num.buffer));
         break;
-
+      
+      case "BigInt":
+        // Big ints are encoded as string.
+        bytes.push.apply(bytes, encode(object.toString(16)))
+        break;
+      
       default:
         // Encode Object.
         if (object instanceof Object) {
@@ -109,6 +115,10 @@ export function decode(buffer, item, type) {
 
     case "Number":
       return Number(new BigInt64Array(buffer.read(8).buffer)[0]);
+
+    case "BigInt":
+      // Big ints are decoded to string.
+      return BigInt("0x" + decode(buffer, ""))
 
     default:
       // Decode Object.

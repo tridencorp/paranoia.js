@@ -30,7 +30,7 @@ let tests = [
 ]
 
 for (let test of tests) {
-  describe('encode/decode', () => {
+  describe('#encode/decode', () => {
     let name = test.object.constructor.name;
 
     let bytes = encode(test.object);
@@ -44,7 +44,7 @@ for (let test of tests) {
   })
 }
 
-describe('encode/decode', () => {
+describe('#encode/decode', () => {
   let array = [new Uint16Array([1]), new Uint16Array([2])];
   let want  = new Uint8Array([2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0]);
   let bytes = encode(array);
@@ -58,7 +58,7 @@ describe('encode/decode', () => {
   it('decodes nested Uint16Array', () => { assert.deepEqual(array, got) });
 });
 
-describe('#encode', () => {
+describe('#encode/decode', () => {
   let str   = "paranoia test";
   let want  = new Uint8Array([13, 0, 0, 0, 0, 0, 0, 0, 112, 97, 114, 97, 110, 111, 105, 97, 32, 116, 101, 115, 116]);
   let bytes = encode(str)
@@ -72,7 +72,7 @@ describe('#encode', () => {
   it('decodes string', () => { assert.deepEqual(str, got) });
 });
 
-describe('#encode', () => {
+describe('#encode/decode', () => {
   let num   = 666;
   let want  = new Uint8Array([154, 2, 0, 0, 0, 0, 0, 0]);
   let bytes = encode(num)
@@ -86,7 +86,7 @@ describe('#encode', () => {
   it('decodes numbers', () => { assert.deepEqual(got, num) });
 });
 
-describe('#encode', () => {
+describe('#encode/decode', () => {
   let object = new TestUser();
   let bytes  = encode(object);
 
@@ -105,4 +105,19 @@ describe('#encode', () => {
 
   decode(buffer, got);
   it('decodes classes', () => { assert.deepEqual(got, object) });
+});
+
+describe('#encode/decode', () => {
+  let big   = BigInt('99999999999');
+  let want  = new Uint8Array([10,0,0,0,0,0,0,0,49,55,52,56,55,54,101,55,102,102]);
+  let bytes = encode(big);
+
+  log(bytes)
+  it('encodes BigInt', () => { assert.deepEqual(bytes, want) });
+
+  let buffer = new Buffer(bytes);
+  let got    = BigInt('');
+
+  got = decode(buffer, got);
+  it('decodes BigInt', () => { assert.deepEqual(got, big) });
 });
