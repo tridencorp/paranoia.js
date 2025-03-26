@@ -120,7 +120,7 @@ export function decode(buffer, item) {
       return Number(new Int64(bytes)[0]);
 
     case "Big":
-      let hex = decode(buffer, "")
+      let hex = decode(buffer, String)
       return new Big("0x" + hex)
 
     default:

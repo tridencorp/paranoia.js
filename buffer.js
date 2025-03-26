@@ -10,7 +10,7 @@ export class Buffer {
     this.offset = 0
   }
 
-  // Read and return next element in buffer based on it's byte size.
+  // Read and return next elements in buffer based on theirs byte size.
   next()   { return this.read(this.size() * 1) }
   next16() { return this.read(this.size() * 2) }
   next32() { return this.read(this.size() * 4) }
@@ -24,8 +24,6 @@ export class Buffer {
   
   // Read n bytes and return them as ArrayBuffer.
   read(n) {
-    const slice = this.buffer.slice(this.offset, this.offset + n)
-    this.offset += n
-    return slice.buffer
+    return this.buffer.slice(this.offset, this.offset += n).buffer
   }  
 }
