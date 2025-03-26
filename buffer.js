@@ -8,11 +8,11 @@ export class Buffer {
     this.offset = 0
   }
 
-  // Read n bytes and return them as Uint8.
+  // Read n bytes and return them as ArrayBuffer.
   read(n) {
     const slice = this.buffer.slice(this.offset, this.offset + n)
     this.offset += n
     
-    return slice
+    return slice.buffer
   }  
 }

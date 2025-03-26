@@ -1,7 +1,6 @@
 import {
-  Big, Int8, Int16, Int32, Int64, Uint8, Uint16, Uint32, Uint64, Float32, Float64
+  Big, Int64, Uint8, Uint64
 } from './types.js';
-
 
 // Encode data to bytes.
 export function encode(...objects) {
@@ -86,29 +85,29 @@ export function decode(buffer, item) {
     case "Uint8":
     case "Int8":
       size = decodeSize(buffer)
-      return new item(buffer.read(size).buffer);
+      return new item(buffer.read(size));
       
     case "Uint16":
     case "Int16":
       size = decodeSize(buffer) * 2
-      return new item(buffer.read(size).buffer);
+      return new item(buffer.read(size));
 
     case "Uint32":
     case "Int32":
     case "Float32":
       size = decodeSize(buffer) * 4
-      return new item(buffer.read(size).buffer);
+      return new item(buffer.read(size));
 
     case "Uint64":
     case "Int64":
     case "Float64":
       size = decodeSize(buffer) * 8
-      return new item(buffer.read(size).buffer);
+      return new item(buffer.read(size));
 
     case "Array":
       size = decodeSize(buffer)
 
-      // First element should always be array type.
+      // First element should always be array type, ex: [Uint8], [Uint16] ...
       let type = item.shift()
 
       for (let i = 0; i < size; i++) {
@@ -119,10 +118,10 @@ export function decode(buffer, item) {
     case "String":
       size  = decodeSize(buffer)
       bytes = buffer.read(size);
-      return new TextDecoder().decode(bytes.buffer)
+      return new TextDecoder().decode(bytes)
 
     case "Number":
-      bytes = buffer.read(8).buffer
+      bytes = buffer.read(8)
       return Number(new Int64(bytes)[0]);
 
     case "Big":
@@ -148,6 +147,6 @@ export function encodeSize(bytes) {
 }
 
 export function decodeSize(buffer) {
-  let size = new Uint64(buffer.read(8).buffer);
+  let size = new Uint64(buffer.read(8));
   return Number(size[0])
 }
