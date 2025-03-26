@@ -17,24 +17,24 @@ class TestUser {
 
 let tests = [
   // Uints
-  { object: new Uint8([1, 2, 3]),    type: Uint8,   want: new Uint8([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
-  { object: new Uint16([1, 2, 3]),   type: Uint16,  want: new Uint8([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
-  { object: new Uint32([1]),         type: Uint32,  want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0])},
-  { object: new Uint64([BigInt(2)]), type: Uint64,  want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
+  { object: new Uint8([1, 2, 3]),     type: Uint8,   want: new Uint8([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
+  { object: new Uint16([1, 2, 3]),    type: Uint16,  want: new Uint8([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
+  { object: new Uint32([1]),          type: Uint32,  want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0])},
+  { object: new Uint64([new Big(2)]), type: Uint64,  want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
 
   // Ints
   { object: new Int8([1, 2, 3]),     type: Int8,    want: new Uint8([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
   { object: new Int16([1, 2, 3]),    type: Int16,   want: new Uint8([3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
   { object: new Int32([1]),          type: Int32,   want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]) },
-  { object: new Int64([BigInt(2)]),  type: Int64,   want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
+  { object: new Int64([new Big(2)]), type: Int64,   want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
 
   // Floats
   { object: new Float32([1.0]),      type: Float32, want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63])},
   { object: new Float64([1.0]),      type: Float64, want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63])},
   
   // Strings and Numbers
-  { object: "paranoia test",               type: String,        want: new Uint8([13, 0, 0, 0, 0, 0, 0, 0, 112, 97, 114, 97, 110, 111, 105, 97, 32, 116, 101, 115, 116])},
-  { object: 666,                           type: Number,        want: new Uint8([154, 2, 0, 0, 0, 0, 0, 0])},
+  { object: "paranoia test",         type: String,  want: new Uint8([13, 0, 0, 0, 0, 0, 0, 0, 112, 97, 114, 97, 110, 111, 105, 97, 32, 116, 101, 115, 116])},
+  { object: 666,                     type: Number,  want: new Uint8([154, 2, 0, 0, 0, 0, 0, 0])},
 ]
 
 describe('#encode/decode', () => {
@@ -89,14 +89,14 @@ describe('#encode/decode', () => {
   });
 
   describe('BigInt', () => {
-    let big   = Big('99999999999');
+    let big   = new Big('99999999999');
     let want  = new Uint8([10, 0, 0, 0, 0, 0, 0, 0, 49, 55, 52, 56, 55, 54, 101, 55, 102, 102]);
     let bytes = encode(big);
 
     it('encodes BigInt', () => { assert.deepEqual(bytes, want) });
 
     let buffer = new Buffer(bytes);
-    let got    = Big('');
+    let got    = new Big('');
 
     got = decode(buffer, got);
     it('decodes BigInt', () => { assert.deepEqual(got, big) });

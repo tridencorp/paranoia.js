@@ -1,7 +1,7 @@
 export class Buffer {
   constructor(bytes) {
-    if(bytes.constructor.name != "Uint8Array") {
-      throw new Error("You must use Uint8Array")
+    if(bytes.constructor.name != "Uint8") {
+      throw new Error("You must use Uint8")
     }
 
     this.buffer = bytes

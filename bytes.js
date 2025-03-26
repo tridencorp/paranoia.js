@@ -2,24 +2,25 @@ import {
   Big, Int8, Int16, Int32, Int64, Uint8, Uint16, Uint32, Uint64, Float32, Float64
 } from './types.js';
 
+
 // Encode data to bytes.
 export function encode(...objects) {
   let bytes = [];
 
   objects.forEach((object, i) => {
     switch (object.constructor.name) {
-      case "Uint8Array":
-      case "Uint16Array":
-      case "Uint32Array":
-      case "BigUint64Array":
+      case "Uint8":
+      case "Uint16":
+      case "Uint32":
+      case "Uint64":
 
-      case "Int8Array":
-      case "Int16Array":
-      case "Int32Array":
-      case "BigInt64Array":
+      case "Int8":
+      case "Int16":
+      case "Int32":
+      case "Int64":
 
-      case "Float32Array":
-      case "Float64Array":
+      case "Float32":
+      case "Float64":
         bytes.push.apply(bytes, encodeSize(object));
         bytes.push.apply(bytes, new Uint8(object.buffer));
         break;
@@ -48,8 +49,8 @@ export function encode(...objects) {
         bytes.push.apply(bytes, new Uint8(num.buffer));
         break;
       
-      case "BigInt":
-        bytes.push.apply(bytes, encode(object.toString(16)))
+      case "Big":
+        bytes.push.apply(bytes, encode(object.big.toString(16)))
         break;
       
       default:
@@ -77,20 +78,20 @@ export function decode(buffer, item) {
   let bytes = [];
   
   switch (item.constructor.name) {
-    case "Uint8Array":
-    case "Uint16Array":
-    case "Uint32Array":
-    case "BigUint64Array":
+    case "Uint8":
+    case "Uint16":
+    case "Uint32":
+    case "Uint64":
 
-    case "Int8Array":
-    case "Int16Array":
-    case "Int32Array":
-    case "BigInt64Array":
+    case "Int8":
+    case "Int16":
+    case "Int32":
+    case "Int64":
 
-    case "Float32Array":
-    case "Float64Array":
+    case "Float32":
+    case "Float64":
       // Get object name, ex: Uint8Array, Int32Array, ...
-      let _class = global[item.constructor.name];
+      let _class = global[parentName(item)];
 
       size = decodeSize(buffer, _class.BYTES_PER_ELEMENT)
       return new _class(buffer.read(size).buffer);
@@ -116,9 +117,9 @@ export function decode(buffer, item) {
       bytes = buffer.read(8).buffer
       return Number(new Int64(bytes)[0]);
 
-    case "BigInt":
+    case "Big":
       let hex = decode(buffer, "")
-      return BigInt("0x" + hex)
+      return new Big("0x" + hex)
 
     default:
       // Decode Object.
@@ -142,4 +143,8 @@ export function encodeSize(bytes) {
 export function decodeSize(buffer, len = 1) {
   let size = new Uint64(buffer.read(8).buffer);
   return Number(size[0]) * len
+}
+
+export function parentName(object) {
+  return Object.getPrototypeOf(Object.getPrototypeOf(object)).constructor.name;
 }

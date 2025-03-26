@@ -1,14 +1,20 @@
-export const Big = BigInt
+export class Big {
+  constructor(value) { this.big = BigInt(value) }
 
-export const Int8  = Int8Array
-export const Int16 = Int16Array
-export const Int32 = Int32Array
-export const Int64 = BigInt64Array
+  valueOf() {
+    return this.big;
+  }
+}
 
-export const Uint8  = Uint8Array
-export const Uint16 = Uint16Array
-export const Uint32 = Uint32Array
-export const Uint64 = BigUint64Array
+export class Int8  extends Int8Array     {}
+export class Int16 extends Int16Array    {}
+export class Int32 extends Int32Array    {}
+export class Int64 extends BigInt64Array {}
 
-export const Float32 = Float32Array
-export const Float64 = Float64Array
+export class Uint8  extends Uint8Array     {}
+export class Uint16 extends Uint16Array    {}
+export class Uint32 extends Uint32Array    {}
+export class Uint64 extends BigUint64Array {}
+
+export class Float32 extends Float32Array {}
+export class Float64 extends Float64Array {}
