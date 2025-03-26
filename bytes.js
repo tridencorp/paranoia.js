@@ -1,5 +1,6 @@
-import { log } from "console";
-import { buffer } from "stream/consumers";
+import {
+  Big, Int8, Int16, Int32, Int64, Uint8, Uint16, Uint32, Uint64, Float32, Float64
+} from './types.js';
 
 // Encode data to bytes.
 export function encode(...objects) {
@@ -19,19 +20,18 @@ export function encode(...objects) {
 
       case "Float32Array":
       case "Float64Array":
-        bytes.push.apply(bytes, size(object));
-        bytes.push.apply(bytes, new Uint8Array(object.buffer));
+        bytes.push.apply(bytes, encodeSize(object));
+        bytes.push.apply(bytes, new Uint8(object.buffer));
         break;
 
       case "Array":
-        // Nested arrays
         let res = []
 
         object.forEach((elem, i) => {
           res.push.apply(res, encode(elem))
         });
 
-        bytes.push.apply(bytes, size(object));
+        bytes.push.apply(bytes, encodeSize(object));
         bytes.push.apply(bytes, res);
         break;
 
@@ -39,17 +39,16 @@ export function encode(...objects) {
         const encoder = new TextEncoder();
         const string  = encoder.encode(object);
 
-        bytes.push.apply(bytes, size(string));
-        bytes.push.apply(bytes, new Uint8Array(string.buffer));
+        bytes.push.apply(bytes, encodeSize(string));
+        bytes.push.apply(bytes, new Uint8(string.buffer));
         break;
 
       case "Number":
-        const num = new BigInt64Array([BigInt(object)]);
-        bytes.push.apply(bytes, new Uint8Array(num.buffer));
+        const num = new Int64([BigInt(object)]);
+        bytes.push.apply(bytes, new Uint8(num.buffer));
         break;
       
       case "BigInt":
-        // Big ints are encoded as string.
         bytes.push.apply(bytes, encode(object.toString(16)))
         break;
       
@@ -58,24 +57,25 @@ export function encode(...objects) {
         if (object instanceof Object) {
           let attrs = []
 
-          // Iterate attributes and encode them. 
+          // Encode attributes. 
           for (let attr in object) {
             attrs.push.apply(attrs, encode(object[attr]))
           }
 
-          bytes.push.apply(bytes, size(attrs));
+          bytes.push.apply(bytes, encodeSize(attrs));
           bytes.push.apply(bytes, attrs);
         }
         break;
     };
   });
 
-  return new Uint8Array(bytes)
+  return new Uint8(bytes)
 }
 
-export function decode(buffer, item, type) {
-  let size = 0;
-
+export function decode(buffer, item) {
+  let size  = 0;
+  let bytes = [];
+  
   switch (item.constructor.name) {
     case "Uint8Array":
     case "Uint16Array":
@@ -92,39 +92,38 @@ export function decode(buffer, item, type) {
       // Get object name, ex: Uint8Array, Int32Array, ...
       let _class = global[item.constructor.name];
 
-      size = new BigUint64Array(buffer.read(8).buffer);
-      size = Number(size[0]) * _class.BYTES_PER_ELEMENT
-
+      size = decodeSize(buffer, _class.BYTES_PER_ELEMENT)
       return new _class(buffer.read(size).buffer);
 
-    // Nested array.
     case "Array":
-      size = new BigUint64Array(buffer.read(8).buffer);
+      size = decodeSize(buffer)
+
+      // First element should always be array type.
+      let type = item.shift()
+
       for (let i = 0; i < size; i++) {
         item.push(decode(buffer, new type))
       }
       return item
 
     case "String":
-      const decoder = new TextDecoder();
+      size  = decodeSize(buffer)
+      bytes = buffer.read(size);
 
-      size = new BigUint64Array(buffer.read(8).buffer);
-      size = Number(size[0])
-
-      return decoder.decode(buffer.read(size).buffer);
+      return new TextDecoder().decode(bytes.buffer)
 
     case "Number":
-      return Number(new BigInt64Array(buffer.read(8).buffer)[0]);
+      bytes = buffer.read(8).buffer
+      return Number(new Int64(bytes)[0]);
 
     case "BigInt":
-      // Big ints are decoded to string.
-      return BigInt("0x" + decode(buffer, ""))
+      let hex = decode(buffer, "")
+      return BigInt("0x" + hex)
 
     default:
       // Decode Object.
       if (item instanceof Object) {
-        size = new BigUint64Array(buffer.read(8).buffer);
-        size = Number(size[0])
+        size = decodeSize(buffer)
 
         // Decode attributes.
         for (let attr in item) {
@@ -135,7 +134,12 @@ export function decode(buffer, item, type) {
   }
 }
 
-export function size(bytes) {
-  let size = new BigUint64Array([BigInt(bytes.length)]);
-  return new Uint8Array(size.buffer);
+export function encodeSize(bytes) {
+  let size = new Uint64([BigInt(bytes.length)]);
+  return new Uint8(size.buffer);
+}
+
+export function decodeSize(buffer, len = 1) {
+  let size = new Uint64(buffer.read(8).buffer);
+  return Number(size[0]) * len
 }
