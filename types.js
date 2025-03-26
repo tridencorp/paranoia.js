@@ -1,5 +1,7 @@
 export class Big {
-  constructor(value) { this.big = BigInt(value) }
+  constructor(value) {
+    this.big = BigInt(value)
+  }
 
   valueOf() {
     return this.big;

@@ -11,7 +11,7 @@ class TestUser {
   constructor() {
     this.name   = "name";
     this.age    = 21;
-    this.prices = new Uint8();
+    this.prices = Uint8;
   }
 }
 
@@ -45,60 +45,62 @@ describe('#encode/decode', () => {
       let bytes  = encode(test.object);
       let buffer = new Buffer(bytes);
 
-      let res = new test.type;
+      let res = test.type;
       res = decode(buffer, res);
 
       it(`encodes ${name}`, () => { assert.deepEqual(bytes, test.want) });
       it(`decodes ${name}`, () => { assert.deepEqual(test.object, res) });
     })
   }
-
-  describe('Nested array', () => {
-    let data  = [new Uint16([1]), new Uint16([2])]
-    let want  = new Uint8([2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0]);
-    let bytes = encode(data);
-    
-    it('encodes nested Uint16Array', () => { assert.deepEqual(bytes, want) });
-
-    let buffer = new Buffer(bytes);
-    let got    = [Uint16];    
-
-    decode(buffer, got);
-    it('decodes nested Uint16Array', () => { assert.deepEqual(data, got) });
-  });
-
-  describe('Class', () => {
-    let object = new TestUser();
-    let bytes  = encode(object);
-
-    let want = new Uint8([
-      28, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Total length
-      4, 0, 0, 0, 0, 0, 0, 0,   // 8 bytes: String length
-      110, 97, 109, 101,        // 4 bytes: String value
-      21, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Number value
-      0, 0, 0, 0, 0, 0, 0, 0    // 8 bytes: Length of Uint8Array
-    ]);
-
-    it('encodes classes', () => { assert.deepEqual(bytes, want) });
-
-    let buffer = new Buffer(bytes);
-    let got    = new TestUser();
-
-    decode(buffer, got);
-    it('decodes classes', () => { assert.deepEqual(got, object) });
-  });
-
-  describe('BigInt', () => {
-    let big   = new Big('99999999999');
-    let want  = new Uint8([10, 0, 0, 0, 0, 0, 0, 0, 49, 55, 52, 56, 55, 54, 101, 55, 102, 102]);
-    let bytes = encode(big);
-
-    it('encodes BigInt', () => { assert.deepEqual(bytes, want) });
-
-    let buffer = new Buffer(bytes);
-    let got    = new Big('');
-
-    got = decode(buffer, got);
-    it('decodes BigInt', () => { assert.deepEqual(got, big) });
-  });
 })
+
+describe('Nested array', () => {
+  let data  = [new Uint16([1]), new Uint16([2])]
+  let want  = new Uint8([2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0]);
+  let bytes = encode(data);
+
+  it('encodes nested Uint16Array', () => { assert.deepEqual(bytes, want) });
+
+  let buffer = new Buffer(bytes);
+  let got    = [Uint16];
+
+  decode(buffer, got);
+  it('decodes nested Uint16Array', () => { assert.deepEqual(data, got) });
+})
+
+describe('Class', () => {
+  let object = new TestUser();
+  object.prices = new Uint8;
+
+  let bytes  = encode(object);
+
+  let want = new Uint8([
+    28, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Total length
+    4, 0, 0, 0, 0, 0, 0, 0,   // 8 bytes: String length
+    110, 97, 109, 101,        // 4 bytes: String value
+    21, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Number value
+    0, 0, 0, 0, 0, 0, 0, 0    // 8 bytes: Length of Uint8Array
+  ]);
+
+  it('encodes classes', () => { assert.deepEqual(bytes, want) });
+
+  let buffer = new Buffer(bytes);
+  let got    = new TestUser();
+
+  decode(buffer, got);
+  it('decodes classes', () => { assert.deepEqual(got, object) });
+});
+
+describe('BigInt', () => {
+  let big   = new Big('99999999999');
+  let want  = new Uint8([10, 0, 0, 0, 0, 0, 0, 0, 49, 55, 52, 56, 55, 54, 101, 55, 102, 102]);
+  let bytes = encode(big);
+
+  it('encodes BigInt', () => { assert.deepEqual(bytes, want) });
+
+  let buffer = new Buffer(bytes);
+  let got    = new Big('');
+
+  got = decode(buffer, got);
+  it('decodes BigInt', () => { assert.deepEqual(got, big) });
+});
