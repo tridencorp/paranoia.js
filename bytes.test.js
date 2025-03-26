@@ -31,7 +31,7 @@ let tests = [
   // Floats
   { object: new Float32([1.0]),      type: Float32, want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63])},
   { object: new Float64([1.0]),      type: Float64, want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63])},
-  
+
   // Strings and Numbers
   { object: "paranoia test",         type: String,  want: new Uint8([13, 0, 0, 0, 0, 0, 0, 0, 112, 97, 114, 97, 110, 111, 105, 97, 32, 116, 101, 115, 116])},
   { object: 666,                     type: Number,  want: new Uint8([154, 2, 0, 0, 0, 0, 0, 0])},

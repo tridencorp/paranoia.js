@@ -80,32 +80,28 @@ export function decode(buffer, item) {
   if (name == "Function") {
     name = item.name;
   }
-  
+
   switch (name) {
     case "Uint8":
     case "Int8":
-      size = decodeSize(buffer)
-      return new item(buffer.read(size));
-      
+      return new item(buffer.next());
+
     case "Uint16":
     case "Int16":
-      size = decodeSize(buffer) * 2
-      return new item(buffer.read(size));
+      return new item(buffer.next16());
 
     case "Uint32":
     case "Int32":
     case "Float32":
-      size = decodeSize(buffer) * 4
-      return new item(buffer.read(size));
+      return new item(buffer.next32());
 
     case "Uint64":
     case "Int64":
     case "Float64":
-      size = decodeSize(buffer) * 8
-      return new item(buffer.read(size));
+      return new item(buffer.next64());
 
     case "Array":
-      size = decodeSize(buffer)
+      size = buffer.size()
 
       // First element should always be array type, ex: [Uint8], [Uint16] ...
       let type = item.shift()
@@ -116,8 +112,7 @@ export function decode(buffer, item) {
       return item
 
     case "String":
-      size  = decodeSize(buffer)
-      bytes = buffer.read(size);
+      bytes = buffer.next();
       return new TextDecoder().decode(bytes)
 
     case "Number":
@@ -131,7 +126,7 @@ export function decode(buffer, item) {
     default:
       // Decode Object.
       if (item instanceof Object) {
-        size = decodeSize(buffer)
+        size = buffer.size()
 
         // Decode attributes.
         for (let attr in item) {
@@ -144,9 +139,4 @@ export function decode(buffer, item) {
 export function encodeSize(bytes) {
   let size = new Uint64([new Big(bytes.length)]);
   return new Uint8(size.buffer);
-}
-
-export function decodeSize(buffer) {
-  let size = new Uint64(buffer.read(8));
-  return Number(size[0])
 }
