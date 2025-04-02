@@ -1,4 +1,4 @@
-import { Uint8, Uint64 } from './types.js';
+import { Uint8, Uint32 } from './types.js';
 
 export class Buffer {
   constructor(bytes) {
@@ -17,7 +17,7 @@ export class Buffer {
 
   // Read the next number of elements in buffer.
   num() {
-    let size = new Uint64(this.read(8).buffer);
+    let size = new Uint32(this.read(4).buffer);
     return Number(size[0])
   }
 

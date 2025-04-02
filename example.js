@@ -26,7 +26,7 @@ tx1.gas    = new Uint32([100_000])
 tx1.amount = new Uint32([10_000])
 
 let bytes = encode(tx1)
-console.log(bytes.length)
+console.log(bytes)
 
 // Example of decode
 let buffer = new Buffer(bytes);

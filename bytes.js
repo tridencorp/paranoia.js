@@ -61,7 +61,7 @@ export function encode(...objects) {
           for (let attr in object) {
             attrs.push.apply(attrs, encode(object[attr]))
           }
-          
+
           bytes.push.apply(bytes, attrs);
         }
         break;
@@ -152,6 +152,6 @@ export function set(item, bytes) {
 }
 
 export function encodeSize(bytes) {
-  let size = new Uint64([new Big(bytes.length)]);
+  let size = new Uint32([bytes.length]);
   return new Uint8(size.buffer);
 }
