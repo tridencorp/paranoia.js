@@ -9,9 +9,15 @@
                                                 --- for all maniacs out there 💊
 ```
 
-It will be efficient library for sending bytes over the internet. No JSON only 
-raw bytes !!! It will be optimized for crypto/financial data. 
+# Paranoia
 
+Efficient library for encoding/decoding and sending bytes over the internet.
+No JSON only raw bytes ⚡️⚡️⚡️ It will be optimized for crypto/financial data. 
+
+
+# Encode
+
+Lets say we have simple class
 
 ```js
 class Transaction {
@@ -23,7 +29,11 @@ class Transaction {
     this.amount = Uint32;
   }
 }
+```
 
+We can encode it using encode().
+
+```js
 let tx = new Transaction()
 
 tx.nonce  = new Uint32([1_000])
@@ -33,27 +43,42 @@ tx.gas    = new Uint32([100_000])
 tx.amount = new Uint32([10_000])
 
 let bytes = encode(tx)
+```
 
+This should give us output like this:
 
-This give us output like this:
+```js
+92, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 232, 3, 0, 0, 20, 0, 0, 0, 0, 0, 
+0, 0, 111, 143, 87, 113, 80, 144, 218, 38, 50, 69, 57, 136, 217, 161, 80, 27, 154, 
+250, 29, 11, 20, 0, 0, 0, 0, 0, 0, 0, 112, 120, 42, 113, 80, 144, 218, 32, 50, 69, 
+57, 136, 217, 134, 80, 27, 154, 144, 22, 14, 1, 0, 0, 0, 0, 0, 0, 0, 160, 134, 1, 
+0, 1, 0, 0, 0, 0, 0, 0, 0, 16, 39, 0, 0
+```
 
-92, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 232, 3, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 111, 143, 87, 113, 
-80, 144, 218, 38, 50, 69, 57, 136, 217, 161, 80, 27, 154, 250, 29, 11, 20, 0, 0, 0, 0, 0, 0, 0, 112, 120, 
-42, 113, 80, 144, 218, 32, 50, 69, 57, 136, 217, 134, 80, 27, 154, 144, 22, 14, 1, 0, 0, 0, 0, 0, 0, 0, 160, 
-134, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 16, 39, 0, 0
+We got 92 bytes - I will try to work on it and optimize the size. Btw, json gives us 396 bytes 
+for the same struct.
 
-We got 92 bytes - I will try to optimize the size. Btw, json gives us 396 bytes for the same struct.
+# Decode
 
+We can decode it like this
 
-We can decode it like this:
-
+```js
 let buffer = new Buffer(bytes);
 let tx2    = new Transaction()
 
 decode(buffer, tx2)
+```
 
+To see if encode/decode is working, we can make simple comparison.
 
-We can compare if they are the same after encode/decode.
-
+```js
 JSON.stringify(tx1) === JSON.stringify(tx2)
+```
+
+# Tests
+ 
+For testing I'm using mocha. 
+
+```js
+npx mocha bytes.test.js
 ```
