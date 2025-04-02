@@ -84,21 +84,21 @@ export function decode(buffer, item) {
   switch (name) {
     case "Uint8":
     case "Int8":
-      return new item(buffer.next());
+      return set(item, buffer.next());
 
     case "Uint16":
     case "Int16":
-      return new item(buffer.next(Uint16));
+      return set(item, buffer.next(Uint16));
 
     case "Uint32":
     case "Int32":
     case "Float32":
-      return new item(buffer.next(Uint32));
+      return set(item, buffer.next(Uint32));  
 
     case "Uint64":
     case "Int64":
     case "Float64":
-      return new item(buffer.next(Uint64));
+      return set(item, buffer.next(Uint64));
 
     case "Array":
       num = buffer.num()
@@ -116,7 +116,7 @@ export function decode(buffer, item) {
       return new TextDecoder().decode(bytes)
 
     case "Number":
-      bytes = buffer.read(8)
+      bytes = buffer.read(8).buffer
       return Number(new Int64(bytes)[0]);
 
     case "Big":
@@ -126,14 +126,25 @@ export function decode(buffer, item) {
     default:
       // Decode Object.
       if (item instanceof Object) {
-        buffer.num()
-
+        num = buffer.num()
+        
         // Decode attributes.
         for (let attr in item) {
           item[attr] = decode(buffer, item[attr])
         }
       }
   }
+}
+
+export function set(item, bytes) {
+  // Item is class instance.
+  if (item.constructor.name != 'Function') {
+    item.set(bytes)
+    return item
+  }
+
+  // Item is constructor function so we can call new.
+  return new item(bytes.buffer);
 }
 
 export function encodeSize(bytes) {

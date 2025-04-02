@@ -17,12 +17,12 @@ export class Buffer {
 
   // Read the next number of elements in buffer.
   num() {
-    let size = new Uint64(this.read(8));
+    let size = new Uint64(this.read(8).buffer);
     return Number(size[0])
   }
 
-  // Read n bytes and return them as ArrayBuffer.
+  // Read n bytes and return them as Uint8.
   read(n) {
-    return this.buffer.slice(this.offset, this.offset += n).buffer
+    return this.buffer.slice(this.offset, this.offset += n)
   }  
 }
