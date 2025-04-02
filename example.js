@@ -1,5 +1,6 @@
 import { encode, decode } from './bytes.js';
 import { Buffer } from './buffer.js';
+import assert from 'assert';
 
 import {
   Big, Int64, Uint8, Uint16, Uint32, Uint64
@@ -26,8 +27,6 @@ tx1.amount = new Uint32([10_000])
 
 let bytes = encode(tx1)
 console.log(bytes)
-
-let a = new Uint32(1)
 
 // Example of decode
 let buffer = new Buffer(bytes);
