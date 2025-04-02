@@ -61,8 +61,7 @@ export function encode(...objects) {
           for (let attr in object) {
             attrs.push.apply(attrs, encode(object[attr]))
           }
-
-          bytes.push.apply(bytes, encodeSize(attrs));
+          
           bytes.push.apply(bytes, attrs);
         }
         break;
@@ -126,8 +125,6 @@ export function decode(buffer, item) {
     default:
       // Decode Object.
       if (item instanceof Object) {
-        num = buffer.num()
-
         // Check if we have class constructor function.
         if (item.constructor.name == 'Function') {
           item = new item()

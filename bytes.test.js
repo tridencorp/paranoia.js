@@ -81,7 +81,6 @@ describe('Class', () => {
   let bytes = encode(object);
 
   let want = new Uint8([
-    28, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Total length
     4, 0, 0, 0, 0, 0, 0, 0,   // 8 bytes: String length
     110, 97, 109, 101,        // 4 bytes: String value
     21, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Number value
