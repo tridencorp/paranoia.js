@@ -10,13 +10,13 @@ export class Buffer {
     this.offset = 0
   }
 
-  // Read and return next elements based on their type byte size.
+  // Read and return next elements based on their byte size.
   next(type = Uint8) {
-    return this.read(this.size() * type.BYTES_PER_ELEMENT)
+    return this.read(this.num() * type.BYTES_PER_ELEMENT)
   }
 
-  // Read the next size from buffer.
-  size() {
+  // Read the next number of elements in buffer.
+  num() {
     let size = new Uint64(this.read(8));
     return Number(size[0])
   }

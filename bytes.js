@@ -73,7 +73,7 @@ export function encode(...objects) {
 }
 
 export function decode(buffer, item) {
-  let size  = 0;
+  let num   = 0;
   let bytes = [];
   let name  = item.constructor.name;
 
@@ -101,12 +101,12 @@ export function decode(buffer, item) {
       return new item(buffer.next(Uint64));
 
     case "Array":
-      size = buffer.size()
+      num = buffer.num()
 
       // First element should always be array type, ex: [Uint8], [Uint16] ...
       let type = item.shift()
 
-      for (let i = 0; i < size; i++) {
+      for (let i = 0; i < num; i++) {
         item.push(decode(buffer, type))
       }
       return item
@@ -126,7 +126,7 @@ export function decode(buffer, item) {
     default:
       // Decode Object.
       if (item instanceof Object) {
-        size = buffer.size()
+        buffer.num()
 
         // Decode attributes.
         for (let attr in item) {
