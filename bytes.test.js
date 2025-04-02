@@ -72,7 +72,7 @@ describe('Class', () => {
   let object = new TestUser();
   object.prices = new Uint8;
 
-  let bytes  = encode(object);
+  let bytes = encode(object);
 
   let want = new Uint8([
     28, 0, 0, 0, 0, 0, 0, 0,  // 8 bytes: Total length
@@ -86,7 +86,7 @@ describe('Class', () => {
 
   let buffer = new Buffer(bytes);
   let got    = new TestUser();
-
+  
   decode(buffer, got);
   it('decodes classes', () => { assert.deepEqual(got, object) });
 });

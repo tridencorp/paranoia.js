@@ -1,5 +1,5 @@
 import {
-  Big, Int64, Uint8, Uint64
+  Big, Int64, Uint8, Uint16, Uint32, Uint64
 } from './types.js';
 
 // Encode data to bytes.
@@ -88,17 +88,17 @@ export function decode(buffer, item) {
 
     case "Uint16":
     case "Int16":
-      return new item(buffer.next16());
+      return new item(buffer.next(Uint16));
 
     case "Uint32":
     case "Int32":
     case "Float32":
-      return new item(buffer.next32());
+      return new item(buffer.next(Uint32));
 
     case "Uint64":
     case "Int64":
     case "Float64":
-      return new item(buffer.next64());
+      return new item(buffer.next(Uint64));
 
     case "Array":
       size = buffer.size()
