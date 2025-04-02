@@ -15,6 +15,12 @@ class TestUser {
   }
 }
 
+class TestTx {
+  constructor() {
+    this.bytes = Uint8;
+ }
+}
+
 let tests = [
   // Uints
   { object: new Uint8([1, 2, 3]),     type: Uint8,   want: new Uint8([3, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3])},
@@ -103,4 +109,21 @@ describe('BigInt', () => {
 
   got = decode(buffer, got);
   it('decodes BigInt', () => { assert.deepEqual(got, big) });
+});
+
+describe('Array of objects', () => {
+  let tx1   = new TestTx()
+  tx1.bytes = new Uint8(100)
+
+  let tx2   = new TestTx(new Uint8(50))
+  tx2.bytes = new Uint8(50)
+
+  let data  = [tx1, tx2]
+  let bytes = encode(data)
+
+  let buffer = new Buffer(bytes);
+  let got    = [TestTx];
+
+  decode(buffer, got);
+  it('decodes array of objects', () => { assert.deepEqual(data, got) });
 });

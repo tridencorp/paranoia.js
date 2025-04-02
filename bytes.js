@@ -75,7 +75,7 @@ export function encode(...objects) {
 export function decode(buffer, item) {
   let num   = 0;
   let bytes = [];
-  let name  = item.constructor.name;
+  let name = item.constructor.name;
 
   if (name == "Function") {
     name = item.name;
@@ -102,7 +102,7 @@ export function decode(buffer, item) {
 
     case "Array":
       num = buffer.num()
-
+      
       // First element should always be array type, ex: [Uint8], [Uint16] ...
       let type = item.shift()
 
@@ -127,11 +127,18 @@ export function decode(buffer, item) {
       // Decode Object.
       if (item instanceof Object) {
         num = buffer.num()
-        
+
+        // Check if we have class constructor function.
+        if (item.constructor.name == 'Function') {
+          item = new item()
+        }
+
         // Decode attributes.
         for (let attr in item) {
           item[attr] = decode(buffer, item[attr])
         }
+
+        return item
       }
   }
 }
