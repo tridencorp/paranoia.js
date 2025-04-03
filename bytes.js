@@ -133,19 +133,11 @@ export function decode(buffer, item) {
 export function set(item, bytes) {
   // Class function constructor, we can call new.
   if (item.constructor.name == 'Function') {
-    if (bytes) {
-      return new item(bytes)
-    }
-    return new item()
+    return bytes ? new item(bytes) : new item()
   }
 
   // We have class instance so we can try to call set.
-  if (bytes) {
-    item.set(bytes)
-    return item
-  }
-
-  return item
+  return bytes ? item.set(bytes) : item
 }
 
 export function encodeSize(size) {
