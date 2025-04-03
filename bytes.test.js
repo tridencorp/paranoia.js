@@ -6,6 +6,7 @@ import {
 } from './types.js';
 
 import assert from 'assert';
+import { arrayBuffer } from 'stream/consumers';
 
 class TestUser {
   constructor() {

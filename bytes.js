@@ -90,7 +90,7 @@ export function decode(buffer, item) {
     case "Int64":
     case "Float32":
     case "Float64":
-      return set(item, buffer.next());
+      return set(item, buffer.next().buffer);
 
     case "Array":
       num = buffer.num()
@@ -118,10 +118,7 @@ export function decode(buffer, item) {
     default:
       // Decode Object.
       if (item instanceof Object) {
-        // Check if we have class constructor function.
-        if (item.constructor.name == 'Function') {
-          item = new item()
-        }
+        item = set(item)
 
         // Decode attributes.
         for (let attr in item) {
@@ -134,14 +131,21 @@ export function decode(buffer, item) {
 }
 
 export function set(item, bytes) {
-  // Item is class instance.
-  if (item.constructor.name != 'Function') {
+  // Class function constructor, we can call new.
+  if (item.constructor.name == 'Function') {
+    if (bytes) {
+      return new item(bytes)
+    }
+    return new item()
+  }
+
+  // We have class instance so we can try to call set.
+  if (bytes) {
     item.set(bytes)
     return item
   }
 
-  // Item is constructor function so we can call new.
-  return new item(bytes.buffer);
+  return item
 }
 
 export function encodeSize(size) {
