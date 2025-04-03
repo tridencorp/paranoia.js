@@ -64,6 +64,7 @@ We got 72 bytes. Btw, json gives us 396 bytes for the same struct.
 Decoding is done by decode() function
 
 ```js
+let bytes  = encode(tx)
 let buffer = new Buffer(bytes);
 let tx2    = new Transaction()
 

@@ -23,14 +23,11 @@ export function encode(...objects) {
         break;
 
       case "Array":
-        let res = []
+        bytes.push.apply(bytes, encodeSize(object.length));
 
         object.forEach((elem, i) => {
-          res.push.apply(res, encode(elem))
+          bytes.push.apply(bytes, encode(elem))
         });
-
-        bytes.push.apply(bytes, encodeSize(object.length));
-        bytes.push.apply(bytes, res);
         break;
 
       case "String":
@@ -94,7 +91,7 @@ export function decode(buffer, item) {
 
     case "Array":
       num = buffer.num()
-
+      
       // First element should always be array type, ex: [Uint8], [Uint16] ...
       let type = item.shift()
 
