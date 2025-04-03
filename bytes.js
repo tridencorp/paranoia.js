@@ -90,15 +90,7 @@ export function decode(buffer, item) {
       return set(item, buffer.next().buffer);
 
     case "Array":
-      num = buffer.num()
-      
-      // First element should always be array type, ex: [Uint8], [Uint16] ...
-      let type = item.shift()
-
-      for (let i = 0; i < num; i++) {
-        item.push(decode(buffer, type))
-      }
-      return item
+      return decodeArray(item, buffer)
 
     case "String":
       bytes = buffer.next();
@@ -115,16 +107,34 @@ export function decode(buffer, item) {
     default:
       // Decode Object.
       if (item instanceof Object) {
-        item = set(item)
-
-        // Decode attributes.
-        for (let attr in item) {
-          item[attr] = decode(buffer, item[attr])
-        }
-
-        return item
+        return decodeObject(item, buffer)
       }
   }
+}
+
+export function decodeArray(arr, buffer) {
+  let num = buffer.num()
+
+  // First element should always be array type, 
+  // ex: [Uint8], [Uint16]
+  let type = arr.shift()
+
+  for (let i = 0; i < num; i++) {
+    arr.push(decode(buffer, type))
+  }
+  
+  return arr
+}
+
+export function decodeObject(obj, buffer) {
+  obj = set(obj)
+
+  // Decode attributes.
+  for (let attr in obj) {
+    obj[attr] = decode(buffer, obj[attr])
+  }
+  
+  return obj
 }
 
 export function set(item, bytes) {
