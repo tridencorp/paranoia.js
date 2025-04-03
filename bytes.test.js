@@ -24,19 +24,19 @@ class TestTx {
 let tests = [
   // Uints
   { object: new Uint8([1, 2, 3]),     type: Uint8,   want: new Uint8([3, 0, 0, 0, 1, 2, 3])},
-  { object: new Uint16([1, 2, 3]),    type: Uint16,  want: new Uint8([3, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
-  { object: new Uint32([1]),          type: Uint32,  want: new Uint8([1, 0, 0, 0, 1, 0, 0, 0])},
-  { object: new Uint64([new Big(2)]), type: Uint64,  want: new Uint8([1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
+  { object: new Uint16([1, 2, 3]),    type: Uint16,  want: new Uint8([6, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
+  { object: new Uint32([1]),          type: Uint32,  want: new Uint8([4, 0, 0, 0, 1, 0, 0, 0])},
+  { object: new Uint64([new Big(2)]), type: Uint64,  want: new Uint8([8, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
 
   // Ints
   { object: new Int8([1, 2, 3]),     type: Int8,    want: new Uint8([3, 0, 0, 0, 1, 2, 3])},
-  { object: new Int16([1, 2, 3]),    type: Int16,   want: new Uint8([3, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
-  { object: new Int32([1]),          type: Int32,   want: new Uint8([1, 0, 0, 0, 1, 0, 0, 0]) },
-  { object: new Int64([new Big(2)]), type: Int64,   want: new Uint8([1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
+  { object: new Int16([1, 2, 3]),    type: Int16,   want: new Uint8([6, 0, 0, 0, 1, 0, 2, 0, 3, 0])},
+  { object: new Int32([1]),          type: Int32,   want: new Uint8([4, 0, 0, 0, 1, 0, 0, 0]) },
+  { object: new Int64([new Big(2)]), type: Int64,   want: new Uint8([8, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0])},
 
   // Floats
-  { object: new Float32([1.0]),      type: Float32, want: new Uint8([1, 0, 0, 0, 0, 0, 128, 63])},
-  { object: new Float64([1.0]),      type: Float64, want: new Uint8([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63])},
+  { object: new Float32([1.0]),      type: Float32, want: new Uint8([4, 0, 0, 0, 0, 0, 128, 63])},
+  { object: new Float64([1.0]),      type: Float64, want: new Uint8([8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 240, 63])},
 
   // Strings and Numbers
   { object: "paranoia test",         type: String,  want: new Uint8([13, 0, 0, 0, 112, 97, 114, 97, 110, 111, 105, 97, 32, 116, 101, 115, 116])},
@@ -62,7 +62,7 @@ describe('#encode/decode', () => {
 
 describe('Nested array', () => {
   let data  = [new Uint16([1]), new Uint16([2])]
-  let want  = new Uint8([2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 2, 0]);
+  let want  = new Uint8([2, 0, 0, 0, 2, 0, 0, 0, 1, 0, 2, 0, 0, 0, 2, 0]);
   let bytes = encode(data);
 
   it('encodes nested Uint16Array', () => { assert.deepEqual(bytes, want) });
@@ -119,7 +119,6 @@ describe('Array of objects', () => {
 
   let data  = [tx1, tx2]
   let bytes = encode(data)
-
   let buffer = new Buffer(bytes);
   let got    = [TestTx];
 

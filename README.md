@@ -57,8 +57,7 @@ This should give us output like this:
 80, 27, 154, 144, 22, 14, 1, 0, 0, 0, 160, 134, 1, 0, 1, 0, 0, 0, 16, 39, 0, 0
 ```
 
-We got 72 bytes - I will try to work on it and optimize the size. Btw, json gives us 396 bytes 
-for the same struct.
+We got 72 bytes. Btw, json gives us 396 bytes for the same struct.
 
 # Decode
 
@@ -78,7 +77,7 @@ JSON.stringify(tx1) === JSON.stringify(tx2)
 ```
 
 # Tests
- 
+
 For testing I'm using mocha. 
 
 ```js

@@ -12,15 +12,13 @@ export function encode(...objects) {
       case "Uint16":
       case "Uint32":
       case "Uint64":
-
       case "Int8":
       case "Int16":
       case "Int32":
       case "Int64":
-
       case "Float32":
       case "Float64":
-        bytes.push.apply(bytes, encodeSize(object));
+        bytes.push.apply(bytes, encodeSize(object.buffer.byteLength));
         bytes.push.apply(bytes, new Uint8(object.buffer));
         break;
 
@@ -31,7 +29,7 @@ export function encode(...objects) {
           res.push.apply(res, encode(elem))
         });
 
-        bytes.push.apply(bytes, encodeSize(object));
+        bytes.push.apply(bytes, encodeSize(object.length));
         bytes.push.apply(bytes, res);
         break;
 
@@ -39,7 +37,7 @@ export function encode(...objects) {
         const encoder = new TextEncoder();
         const string  = encoder.encode(object);
 
-        bytes.push.apply(bytes, encodeSize(string));
+        bytes.push.apply(bytes, encodeSize(string.length));
         bytes.push.apply(bytes, new Uint8(string.buffer));
         break;
 
@@ -74,6 +72,7 @@ export function encode(...objects) {
 export function decode(buffer, item) {
   let num   = 0;
   let bytes = [];
+
   let name = item.constructor.name;
 
   if (name == "Function") {
@@ -82,26 +81,20 @@ export function decode(buffer, item) {
 
   switch (name) {
     case "Uint8":
-    case "Int8":
-      return set(item, buffer.next());
-
     case "Uint16":
-    case "Int16":
-      return set(item, buffer.next(Uint16));
-
     case "Uint32":
-    case "Int32":
-    case "Float32":
-      return set(item, buffer.next(Uint32));  
-
     case "Uint64":
+    case "Int8":
+    case "Int16":
+    case "Int32":
     case "Int64":
+    case "Float32":
     case "Float64":
-      return set(item, buffer.next(Uint64));
+      return set(item, buffer.next());
 
     case "Array":
       num = buffer.num()
-      
+
       // First element should always be array type, ex: [Uint8], [Uint16] ...
       let type = item.shift()
 
@@ -116,7 +109,7 @@ export function decode(buffer, item) {
 
     case "Number":
       bytes = buffer.read(8).buffer
-      return Number(new Int64(bytes)[0]);
+      return Number(new Int64(bytes)[0]); 
 
     case "Big":
       let hex = decode(buffer, String)
@@ -151,7 +144,7 @@ export function set(item, bytes) {
   return new item(bytes.buffer);
 }
 
-export function encodeSize(bytes) {
-  let size = new Uint32([bytes.length]);
+export function encodeSize(size) {
+  size = new Uint32([size]);
   return new Uint8(size.buffer);
 }
