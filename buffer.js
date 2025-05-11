@@ -17,7 +17,7 @@ export class Buffer {
 
   // Read the number of next elements in buffer.
   num() {
-    return new Uint32(this.read(4).buffer)[0];
+    return new Uint32(this.read(8).buffer)[0];
   }
 
   // Read n bytes and return them as Uint8.

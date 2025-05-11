@@ -85,7 +85,8 @@ export function decode(buffer, item) {
       return set(item, buffer.next().buffer);
 
     case "Array":
-      return decodeArray(item, buffer)
+      decodeArray(item, buffer)
+      break
 
     case "String":
       bytes = buffer.next();
@@ -117,8 +118,6 @@ export function decodeArray(array, buffer) {
   for (let i = 0; i < num; i++) {
     array.push(decode(buffer, type))
   }
-
-  return array
 }
 
 export function decodeObject(obj, buffer) {
@@ -145,6 +144,6 @@ export function set(item, bytes) {
 }
 
 export function encodeSize(size) {
-  size = new Uint32([size]);
+  size = new Uint64([new Big(size)]);
   return new Uint8(size.buffer);
 }
