@@ -2,7 +2,7 @@ import {
   Big, Int64, Uint8, Uint16, Uint32, Uint64
 } from './types.js';
 
-// Encode data to bytes.
+// Encode data.
 export function encode(...objects) {
   let bytes = [];
 
@@ -50,14 +50,10 @@ export function encode(...objects) {
       default:
         // Encode Object.
         if (object instanceof Object) {
-          let attrs = []
-
-          // Encode attributes. 
+          // Encode attributes.
           for (let attr in object) {
-            attrs.push.apply(attrs, encode(object[attr]))
+            bytes.push.apply(bytes, encode(object[attr]))
           }
-
-          bytes.push.apply(bytes, attrs);
         }
         break;
     };
@@ -66,10 +62,9 @@ export function encode(...objects) {
   return new Uint8(bytes)
 }
 
+// Decode bytes.
 export function decode(buffer, item) {
-  let num   = 0;
   let bytes = [];
-
   let name = item.constructor.name;
 
   if (name == "Function") {
@@ -112,18 +107,18 @@ export function decode(buffer, item) {
   }
 }
 
-export function decodeArray(arr, buffer) {
+export function decodeArray(array, buffer) {
   let num = buffer.num()
 
   // First element should always be array type, 
   // ex: [Uint8], [Uint16]
-  let type = arr.shift()
-
-  for (let i = 0; i < num; i++) {
-    arr.push(decode(buffer, type))
-  }
+  let type = array.shift()
   
-  return arr
+  for (let i = 0; i < num; i++) {
+    array.push(decode(buffer, type))
+  }
+
+  return array
 }
 
 export function decodeObject(obj, buffer) {
@@ -131,7 +126,8 @@ export function decodeObject(obj, buffer) {
 
   // Decode attributes.
   for (let attr in obj) {
-    obj[attr] = decode(buffer, obj[attr])
+    const d = decode(buffer, obj[attr])
+    obj[attr] = d
   }
   
   return obj
@@ -144,7 +140,8 @@ export function set(item, bytes) {
   }
 
   // We have class instance so we can try to call set.
-  return bytes ? item.set(bytes) : item
+  bytes ? item.set(bytes) : item
+  return item
 }
 
 export function encodeSize(size) {
