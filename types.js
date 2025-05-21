@@ -1,3 +1,6 @@
+// We need this to run it in the browser or node.js
+const ctx = (typeof window !== 'undefined' ? window : global);
+
 export class Big {
   constructor(value) {
     this.big = BigInt(value)
@@ -20,3 +23,11 @@ export class Uint64 extends BigUint64Array {}
 
 export class Float32 extends Float32Array {}
 export class Float64 extends Float64Array {}
+
+export function Number(value) {
+  return ctx.Number(value) || ctx.Number(0);
+}
+
+export function String(value) {
+  return value ? ctx.String(value) : ctx.String("");
+}

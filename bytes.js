@@ -5,9 +5,22 @@ import {
 // Encode data.
 export function encode(...objects) {
   let bytes = [];
-
+  
   objects.forEach((object, i) => {
     switch (object.constructor.name) {
+      case "Uint8Array":
+      case "Uint16Array":
+      case "Uint32Array":
+      case "BigUint64Array":
+      case "Int8Array":
+      case "Int16Array":
+      case "Int32Array":
+      case "BigInt64Array":
+      case "Float32Array":
+      case "Float64Array":
+        bytes.push.apply(bytes, new Uint8(object.buffer));
+        break;
+
       case "Uint8":
       case "Uint16":
       case "Uint32":
